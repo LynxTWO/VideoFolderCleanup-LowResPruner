@@ -177,3 +177,46 @@ print("Cleanup completed. See 'deleted_movies_log.txt' for details.")
 11. ASF, Advanced Systems Format - ASF is Microsoft's proprietary digital audio/digital video container format, especially meant for streaming media. ASF is part of the Windows Media framework.
 12. 3GP/3G2, 3rd Generation Partnership Project/3rd Generation Partnership Project 2 - 3GP and 3G2 are container formats designed for video on mobile phones. 3GP is a simplified version of the MP4 format and was designed to make file sizes smaller so mobile phones could support video.
 13. WEBM, WebM Video - WebM is a video file format intended for use with HTML5 video. It offers high-quality video compression and is designed for use on the web, with support across many browsers.
+
+# This Python script automates the process of cleaning up a movie collection by deleting lower-resolution files within a specified directory structure, moving the deleted files to the Recycle Bin, and logging the operation's details. Here's a step-by-step explanation of how the script works:
+
+***1. Setting Up***
+
+It imports necessary modules: os for interacting with the operating system, re for regular expressions, time to track the operation's duration, and send2trash to safely move files to the Recycle Bin.
+Initializes variables for the start time, base directory path (D:\\Movies\\), log file name, and a compiled regular expression pattern to match filenames.
+
+***2. Compiled Regular Expression Pattern***
+
+The pattern is designed to match file names that follow a specific format: a name followed by details enclosed in brackets (including resolution and file extension), such as "Show Name - [Resolution, Codec, Audio].ext".
+This pattern captures the name of the show, the resolution (the number before 'x' in dimensions like 1920x1080), and the file extension.
+
+***3. Function: process_directory***
+
+Iterates over each file in a given directory, skipping directories and files that don't match the pattern.
+For files that match, it extracts the movie's name, resolution, and extension.
+It compares the current file's resolution with any previously encountered file with the same name but different resolutions stored in a dictionary named movies.
+If a file with the same name but a higher resolution is found, the script marks the lower resolution file for deletion.
+If the current file is of a higher resolution than a previously noted file, it updates the record to keep the current file and marks the other for deletion.
+Deletes the marked file using send2trash, ensuring it goes to the Recycle Bin, and logs the deletion in deleted_movies_log.txt.
+Accumulates the size of deleted files to calculate the total freed space.
+
+***4. Traversing Subfolders***
+
+The script walks through the base_directory and its subdirectories using os.walk, processing each directory by calling process_directory.
+This approach allows the script to recursively clean up the entire folder structure under the specified base directory.
+
+***5. Calculating and Logging Results***
+
+After processing all directories, the script calculates the total space freed by deleted files and the operation's total duration.
+It logs these details, along with a list of deleted files, in deleted_movies_log.txt.
+Finally, it prints a completion message, signaling the end of the cleanup process.
+
+Summary
+The script intelligently identifies and deletes lower-resolution movie files based on filename patterns, prioritizing the retention of higher-resolution versions. This cleanup not only helps in optimizing storage space but also ensures the collection maintains the best possible video quality.
+
+
+
+
+
+
+
